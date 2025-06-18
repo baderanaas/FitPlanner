@@ -1,6 +1,7 @@
 import { UserButton, useAuth, useUser } from "@clerk/clerk-react";
 import { Link } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
+import Navbar from "./Navbar";
 
 function Chat() {
   const { getToken, isLoaded, isSignedIn } = useAuth();
@@ -160,45 +161,7 @@ function Chat() {
   return (
     <>
       {/* Top Navigation */}
-      <nav
-        className="navbar navbar-expand-lg navbar-dark bg-gradient shadow-sm fixed-top"
-        style={{
-          background: "linear-gradient(135deg, #1a936f 0%, #114b5f 100%)",
-          height: "70px",
-        }}
-      >
-        <div className="container-fluid px-4">
-          <Link
-            to="/"
-            className="navbar-brand fw-bold d-flex align-items-center"
-          >
-            <i className="fas fa-leaf me-2"></i>
-            FitPlanner
-          </Link>
-          <button
-            className="navbar-toggler d-lg-none"
-            type="button"
-            onClick={handleToggle}
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ms-auto">
-              <li className="nav-item d-flex align-items-center">
-                <span className="text-white me-3 d-none d-lg-inline">
-                  Welcome,{" "}
-                  {user?.firstName || user?.emailAddresses?.[0]?.emailAddress}
-                </span>
-                <UserButton afterSignOutUrl="/login" />
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-
+      <Navbar/>
       {/* Main Chat Interface */}
       <div className="desktop-chat-container">
         {/* Chat Header */}

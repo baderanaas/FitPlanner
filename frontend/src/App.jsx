@@ -8,7 +8,6 @@ import { Chat } from "./pages/Chat";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Billing from "./pages/Billing";
-import { Layout } from "./layouts/Layout";
 
 import "./App.css";
 import { SignedOut, SignedIn } from "@clerk/clerk-react";

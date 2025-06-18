@@ -11,7 +11,8 @@ app.add_middleware(
         "http://localhost:5173",  # React dev server
         "http://127.0.0.1:5173",  # Sometimes used too
         # Add production URL(s) here when deploying
-        "https://knowdroids-fit-planner-itfs35ts3-anas-projects-6124f869.vercel.app",
+        "https://knowdroids-fit-planner.vercel.app",
+        "https://knowdroids-fit-planner.vercel.app/",
     ],
     allow_credentials=True,
     allow_methods=["*"],

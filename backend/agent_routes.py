@@ -12,13 +12,17 @@ router = APIRouter()
 
 
 class AgentRequest(BaseModel):
-    query: str
+    message: str
+    user_id: str
+    timestamp: str
 
 
 @router.post("/agent", status_code=status.HTTP_201_CREATED)
 async def agent(request: AgentRequest = Body(...)):
     try:
-        user_id = "teeest1"
+        message = request.message
+        user_id = request.user_id
+        timestamp = request.timestamp
 
         buffer = get_buffer(user_id)
 
@@ -27,7 +31,8 @@ async def agent(request: AgentRequest = Body(...)):
 Use tools only when needed. Give concise, practical advice based on the user's input.
 Past conversations (if any): {buffer[-5:] if buffer else "None found."}
 To retrieve older information, use the 'get_memories' tool when relevant.
-User query: {request.query}
+User query: {message}
+The timestamp of this request is {timestamp}.
 """
 
         # Construct message history with system, memory buffer, and user message
@@ -35,7 +40,7 @@ User query: {request.query}
 
         initial_state = {
             "messages": messages,
-            "user_query": request.query,
+            "user_query": message,
             "final_answer": None,
             "user_id": user_id,
         }
@@ -43,6 +48,12 @@ User query: {request.query}
         # Get and run agent
         app = get_agent().compile()
         result = await app.ainvoke(initial_state)
+
+        result["final_answer"] = (
+            result["messages"][-1]["content"]
+            if result["messages"]
+            else "No response generated."
+        )
 
         return JSONResponse(content=result, status_code=status.HTTP_201_CREATED)
 

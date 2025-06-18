@@ -27,13 +27,6 @@ function Chat() {
     scrollToBottom();
   }, [messages]);
 
-  const handleToggle = () => {
-    const navbarCollapse = document.getElementById("navbarNav");
-    if (navbarCollapse) {
-      navbarCollapse.classList.toggle("show");
-    }
-  };
-
   const sendMessageToAPI = async (message) => {
     try {
       const token = await getToken();

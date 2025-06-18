@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { Chat } from "./pages/Chat";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -6,30 +11,62 @@ import Billing from "./pages/Billing";
 import { Layout } from "./layouts/Layout";
 
 import "./App.css";
-import { SignedOut } from "@clerk/clerk-react";
+import { SignedOut, SignedIn } from "@clerk/clerk-react";
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Public routes for signed out users */}
+        {/* Redirect root based on auth status */}
         <Route
           path="/"
           element={
+            <>
+              <SignedIn>
+                <Navigate to="/chat" />
+              </SignedIn>
+              <SignedOut>
+                <Navigate to="/login" />
+              </SignedOut>
+            </>
+          }
+        />
+
+        {/* Public routes only accessible if signed out */}
+        <Route
+          path="/login"
+          element={
             <SignedOut>
-              <Layout />
+              <Login />
             </SignedOut>
           }
-        >
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-        </Route>
+        />
+        <Route
+          path="/register"
+          element={
+            <SignedOut>
+              <Register />
+            </SignedOut>
+          }
+        />
 
-        <Route path="/billing" element={<Billing />} />
-
-        {/* Protected routes for signed in users */}
-
-        <Route path="/chat" element={<Chat />} />
+        {/* Protected routes only accessible if signed in */}
+        <Route
+          path="/chat"
+          element={
+            <SignedIn>
+              <Chat />
+            </SignedIn>
+          }
+        />
+        <Route
+          path="/billing"
+          element={
+            <SignedIn>
+              <Billing />
+            </SignedIn>
+          }
+        />
       </Routes>
     </Router>
   );

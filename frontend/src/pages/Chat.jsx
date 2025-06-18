@@ -35,18 +35,21 @@ function Chat() {
         throw new Error("No authentication token available");
       }
 
-      const response = await fetch("http://localhost:8000/agent", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          message: message,
-          user_id: user?.id,
-          timestamp: new Date().toISOString(),
-        }),
-      });
+      const response = await fetch(
+        "https://noticeably-thorough-aardvark.ngrok-free.app/agent",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            message: message,
+            user_id: user?.id,
+            timestamp: new Date().toISOString(),
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -154,7 +157,7 @@ function Chat() {
   return (
     <>
       {/* Top Navigation */}
-      <Navbar/>
+      <Navbar />
       {/* Main Chat Interface */}
       <div className="desktop-chat-container">
         {/* Chat Header */}

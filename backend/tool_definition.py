@@ -1,7 +1,15 @@
 import inspect
 from typing import Dict, List, Optional
 
-from tools import _get_meal_prep, _get_nutrition_info, _bmi_calculator, _get_bodyfat_percentage, _get_ideal_weight, _get_macro_calculator
+from tools import (
+    _get_meal_prep,
+    _get_nutrition_info,
+    _bmi_calculator,
+    _get_bodyfat_percentage,
+    _get_ideal_weight,
+    _get_macro_calculator,
+)
+from memory.memory import get_memories
 
 
 def generate_tool_definition(func, state) -> Dict:
@@ -48,7 +56,7 @@ def generate_tool_definition(func, state) -> Dict:
         if state and "user_id" in state:
             parameters["properties"]["key"] = {
                 "type": "string",
-                "description": "The session ID used for memory retrieval (injected automatically).",
+                "description": "The user ID used for memory retrieval (injected automatically).",
                 "default": state["user_id"],
             }
         else:
@@ -79,8 +87,13 @@ def get_tools(state) -> List[Dict]:
     """
     tools = []
     for func in [
-        _get_meal_prep, _get_nutrition_info, _bmi_calculator, _get_bodyfat_percentage, _get_ideal_weight, _get_macro_calculator
-
+        _get_meal_prep,
+        _get_nutrition_info,
+        _bmi_calculator,
+        _get_bodyfat_percentage,
+        _get_ideal_weight,
+        _get_macro_calculator,
+        get_memories,
     ]:
         try:
             tools.append(generate_tool_definition(func, state))
@@ -103,8 +116,13 @@ def get_tools_mapping() -> Dict[str, callable]:
     """
     mapping = {}
     for name, func in [
-        ("_get_meal_prep",_get_meal_prep), ("_get_nutrition_info",_get_nutrition_info), ("_bmi_calculator",_bmi_calculator), ("_get_bodyfat_percentage",_get_bodyfat_percentage), ("_get_ideal_weight",_get_ideal_weight), ("_get_macro_calculator",_get_macro_calculator)
-
+        ("_get_meal_prep", _get_meal_prep),
+        ("_get_nutrition_info", _get_nutrition_info),
+        ("_bmi_calculator", _bmi_calculator),
+        ("_get_bodyfat_percentage", _get_bodyfat_percentage),
+        ("_get_ideal_weight", _get_ideal_weight),
+        ("_get_macro_calculator", _get_macro_calculator),
+        ("get_memories", get_memories),
     ]:
         if not callable(func):
             raise RuntimeError(f"Tool {name} is not a callable function")

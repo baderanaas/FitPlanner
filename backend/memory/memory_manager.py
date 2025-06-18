@@ -9,6 +9,7 @@ from qdrant_client.models import (
     Filter,
     FieldCondition,
     MatchValue,
+    PayloadSchemaType,
 )
 from sentence_transformers import SentenceTransformer
 import uuid
@@ -26,7 +27,7 @@ class MemoryManager:
         redis_username: str,
         redis_password: str,
         short_term_window: int = 10,
-        collection_name: str = "long_term_memory",
+        collection_name: str = "long_term_memory_collection",
     ):
         self.collection_name = collection_name
         self.short_term_window = short_term_window
@@ -60,6 +61,15 @@ class MemoryManager:
                     vectors_config=VectorParams(size=384, distance=Distance.COSINE),
                 )
                 print(f"Created collection: {self.collection_name}")
+
+            # ✅ Create index for user_id_hash
+            self.qdrant_client.create_payload_index(
+                collection_name=self.collection_name,
+                field_name="user_id_hash",
+                field_schema=PayloadSchemaType.KEYWORD,
+            )
+            print("Created index for 'user_id_hash'")
+
         except Exception as e:
             print(f"Error initializing collection: {e}")
 

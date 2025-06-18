@@ -1,0 +1,11 @@
+langchain
+openai
+qdrant_client
+transformers
+python-dotenv
+fastapi
+langgraph
+uvicorn
+sentence_transformers
+redis
+langchain-community

@@ -45,7 +45,6 @@ function Chat() {
           },
           body: JSON.stringify({
             message: message,
-            user_id: user?.id,
             timestamp: new Date().toISOString(),
           }),
         }

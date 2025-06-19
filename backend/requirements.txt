@@ -9,3 +9,5 @@ uvicorn
 sentence_transformers
 redis
 langchain-community
+clerk-sdk
+python-jose[cryptography]

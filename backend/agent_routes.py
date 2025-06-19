@@ -2,6 +2,9 @@ from fastapi import APIRouter, HTTPException, status, Body
 from fastapi.responses import JSONResponse
 import json
 from pydantic import BaseModel
+from fastapi import Depends
+from auth.clerk_auth import get_current_user_id
+
 
 from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AIMessage
 
@@ -13,20 +16,20 @@ router = APIRouter()
 
 class AgentRequest(BaseModel):
     message: str
-    user_id: str
     timestamp: str
 
 
 @router.post("/agent", status_code=status.HTTP_201_CREATED)
-async def agent(request: AgentRequest = Body(...)):
+async def agent(
+    request: AgentRequest = Body(...),
+    user_id: str = Depends(get_current_user_id),
+):
     try:
         message = request.message
-        user_id = request.user_id
         timestamp = request.timestamp
 
         buffer = get_buffer(user_id)
 
-        # Add system instruction for the AI agent's behavior
         system_prompt = f"""You are a helpful assistant for fitness and meal planning. 
 Use tools only when needed. Give concise, practical advice based on the user's input.
 Past conversations (if any): {buffer[-5:] if buffer else "None found."}
@@ -35,7 +38,6 @@ User query: {message}
 The timestamp of this request is {timestamp}.
 """
 
-        # Construct message history with system, memory buffer, and user message
         messages = [system_prompt]
 
         initial_state = {
@@ -45,7 +47,6 @@ The timestamp of this request is {timestamp}.
             "user_id": user_id,
         }
 
-        # Get and run agent
         app = get_agent().compile()
         result = await app.ainvoke(initial_state)
 
@@ -70,13 +71,10 @@ The timestamp of this request is {timestamp}.
         )
 
     except Exception as e:
-        # Add more detailed error logging
         import traceback
 
-        error_details = traceback.format_exc()
-        print(f"Error in agent endpoint: {error_details}")  # Log the full traceback
-
+        print("Error in /agent endpoint:", traceback.format_exc())
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"An internal server error occurred: {str(e)}",
+            detail=f"Internal server error: {str(e)}",
         )

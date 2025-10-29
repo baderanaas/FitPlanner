@@ -4,9 +4,6 @@
 
 > A smart fitness companion that helps users calculate BMI, body fat percentage, ideal weight, macros, and generate personalized meal plans — all through a friendly AI chat interface.
 
-## 🌐 Live Demo
-👉 https://knowdroids-fit-planner.vercel.app/
-
 ---
 
 ## 🚀 Features

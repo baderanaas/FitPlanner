@@ -1,9 +1,11 @@
 import os
 import math
 import requests
+import logging
 from dotenv import load_dotenv
 
 load_dotenv()
+logger = logging.getLogger(__name__)
 
 SPOONACULAR_API_KEY = os.getenv("SPOON_API_KEY")
 USDA_API_KEY = os.getenv("FOOD_API_KEY")
@@ -21,6 +23,7 @@ def _get_meal_prep(diet: str = None, allergies: list[str] = None, calories: int 
     Returns:
         A JSON object with a full-day meal plan including breakfast, lunch, dinner and nutritional breakdown.
     """
+    logger.info(f"🍽️  Tool called: _get_meal_prep | diet={diet}, allergies={allergies}, calories={calories}")
 
     url = "https://api.spoonacular.com/mealplanner/generate"
     params = {"timeFrame": "day", "apiKey": SPOONACULAR_API_KEY}
@@ -45,6 +48,7 @@ def _get_nutrition_info(food: str):
     Returns:
         A structured nutritional report including calories, protein, fat, carbs, vitamins, and more.
     """
+    logger.info(f"🥗 Tool called: _get_nutrition_info | food={food}")
 
     search_url = "https://api.nal.usda.gov/fdc/v1/foods/search"
     search_params = {"query": food, "api_key": USDA_API_KEY}
@@ -59,24 +63,23 @@ def _get_nutrition_info(food: str):
     return detail_response.json()
 
 
-def _bmi_calculator(weight: float, height: float, unit: str = "metric"):
+def _bmi_calculator(weight: float, height: float):
     """
     Calculate Body Mass Index (BMI) using either metric or imperial units.
+    Make sure to convert weight to kg and cm.
 
     Args:
-        weight (float): Weight in kilograms (metric) or pounds (imperial).
-        height (float): Height in centimeters (metric) or inches (imperial).
-        unit (str): Unit system, either "metric" or "imperial". Defaults to "metric".
+        weight (float): Weight in kilograms (metric)
+        height (float): Height in centimeters (metric)
 
     Returns:
         The calculated BMI rounded to two decimal places.
     """
+    logger.info(f"⚖️  Tool called: _bmi_calculator | weight={weight}kg, height={height}cm")
     weight = float(weight)
     height = float(height)
-    if unit == "imperial":
-        bmi = (weight / (height**2)) * 703
-    else:
-        bmi = weight / (height / 100) ** 2
+
+    bmi = weight / (height / 100) ** 2
     return str({"bmi": round(bmi, 2)})
 
 
@@ -85,6 +88,7 @@ def _get_bodyfat_percentage(
 ):
     """
     Estimate body fat percentage using the US Navy formula based on circumference measurements.
+    make sure to convert all measurements to centimeters.
 
     Args:
         gender (str): "male" or "female".
@@ -96,6 +100,7 @@ def _get_bodyfat_percentage(
     Returns:
         Estimated body fat percentage.
     """
+    logger.info(f"📏 Tool called: _get_bodyfat_percentage | gender={gender}, waist={waist}cm, neck={neck}cm, height={height}cm, hip={hip}cm")
     waist = float(waist)
     neck = float(neck)
     height = float(height)
@@ -118,23 +123,21 @@ def _get_bodyfat_percentage(
 def _get_ideal_weight(height: float, gender: str):
     """
     Calculate the ideal body weight based on gender and height using the Devine formula.
+    convert the height to inches.
 
     Args:
         height (float): Height in centimeters.
         gender (str): "male" or "female".
 
     Returns:
-        Ideal weight in kilograms for the given height and gender.
+        Ideal weight in kilograms for the given height and gender. (converted to kg)
     """
+    logger.info(f"🎯 Tool called: _get_ideal_weight | height={height}cm, gender={gender}")
     try:
-        # Convert height to float if it's passed as string
-        height_cm = float(height)
-        height_in = height_cm / 2.54  # convert cm to inches
-
         if gender.lower() == "male":
-            ideal_weight = 50 + 2.3 * (height_in - 60)
+            ideal_weight = 50 + 2.3 * (height - 60)
         elif gender.lower() == "female":
-            ideal_weight = 45.5 + 2.3 * (height_in - 60)
+            ideal_weight = 45.5 + 2.3 * (height - 60)
         else:
             return "Invalid gender specified. Please use 'male' or 'female'."
 
@@ -153,6 +156,7 @@ def _get_macro_calculator(
 ):
     """
     Calculate Total Daily Energy Expenditure (TDEE) and daily macronutrient distribution.
+    Convert height to cm and weight to kg.
 
     Args:
         age (int): Age of the user in years.
@@ -165,6 +169,7 @@ def _get_macro_calculator(
     Returns:
         Daily calorie target and macro breakdowns for multiple diet styles (balanced, lowfat, etc.).
     """
+    logger.info(f"💪 Tool called: _get_macro_calculator | age={age}, gender={gender}, height={height}cm, weight={weight}kg, activity_level={activity_level}, goal={goal}")
     if gender == "male":
         bmr = 10 * weight + 6.25 * height - 5 * age + 5
     else:

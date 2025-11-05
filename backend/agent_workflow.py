@@ -7,7 +7,7 @@ from memory.memory import store_memory
 
 
 def should_continue(state: AgentState):
-    print("STATE:", state)
+    # print("STATE:", state)
     messages = state["messages"]
     last_message = messages[-1]
 
@@ -15,7 +15,7 @@ def should_continue(state: AgentState):
     if isinstance(last_message, str):
         # If it's a string, no tool calls possible
         state["final_answer"] = last_message
-        print("FINAL ANSWER:", state["final_answer"])
+        # print("FINAL ANSWER:", state["final_answer"])
         store_memory(state)
         return "end"
 
@@ -25,7 +25,7 @@ def should_continue(state: AgentState):
     else:
         # Store the final answer and memory before ending
         state["final_answer"] = last_message.get("content", "")
-        print("FINAL ANSWER:", state["final_answer"])
+        # print("FINAL ANSWER:", state["final_answer"])
         store_memory(state)
         return "end"
 

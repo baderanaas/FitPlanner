@@ -8,6 +8,7 @@ from agentState import AgentState
 load_dotenv()
 
 redis_url = os.getenv("REDIS_URL")
+redis_port = int(os.getenv("REDIS_PORT", 12095))
 redis_username = os.getenv("REDIS_USERNAME")
 redis_password = os.getenv("REDIS_PASSWORD")
 
@@ -18,6 +19,7 @@ memory_manager = MemoryManager(
     qdrant_url=qdrant_url,
     api_key=qdrant_api_key,
     redis_url=redis_url,
+    redis_port=redis_port,
     redis_password=redis_password,
     redis_username=redis_username,
 )

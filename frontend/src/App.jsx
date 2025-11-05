@@ -14,7 +14,7 @@ import { SignedOut, SignedIn } from "@clerk/clerk-react";
 
 function App() {
   return (
-    <Router>
+    <Router basename={import.meta.env.VITE_BASE_PATH || "/"}>
       <Routes>
         {/* Redirect root based on auth status */}
         <Route
